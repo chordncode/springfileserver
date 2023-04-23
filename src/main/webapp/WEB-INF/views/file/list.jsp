@@ -134,28 +134,27 @@
     const imageList = ['jpg', 'jpeg', 'png'];
     const audioList = ['mp3', 'wav'];
     const videoList = ['mp4'];
+    const formatList = [...imageList, ...audioList, ...videoList];
 
     filename.forEach(function(td){
         const originalName = td.textContent;
         const formatType = originalName.substring(originalName.lastIndexOf('.') + 1).toLowerCase();
 
+        if(formatList.includes(formatType)){
+            td.classList.add('file-preview');
+            filePreview.push(td);
+        }
+        
         if(imageList.includes(formatType)){
-            td.classList.add('file-preview');
             td.classList.add('image-preview');
-            filePreview.push(td);
         }
-
         if(audioList.includes(formatType)){
-            td.classList.add('file-preview');
             td.classList.add('audio-preview');
-            filePreview.push(td);
+        }
+        if(videoList.includes(formatType)){
+            td.classList.add('video-preview');
         }
 
-        if(videoList.includes(formatType)){
-            td.classList.add('file-preview');
-            td.classList.add('video-preview');
-            filePreview.push(td);
-        }
     });
 
     downloadBtn.forEach(function(btn){
