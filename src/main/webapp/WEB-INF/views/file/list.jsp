@@ -102,6 +102,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-center align-items-center">
+                        <image id="imagePreview" src="" class="d-none preview-control" style="max-width: 100%; max-height: 100%;"></image>
                         <audio id="audioPreview" src="" class="d-none preview-control" controls></audio>
                         <video id="videoPreview" src="" class="d-none preview-control" controls style="max-width: 100%; max-height: 100%;"></video>
                     </div>
@@ -124,17 +125,26 @@
 
     const previewModal = new bootstrap.Modal(document.querySelector('#previewModal'), {});
     const previewControl = document.querySelectorAll('.preview-control');
+    const imagePreview = document.querySelector('#imagePreview');
     const audioPreview = document.querySelector('#audioPreview');
     audioPreview.volume = 0.5;
     const videoPreview = document.querySelector('#videoPreview');
     videoPreview.volume = 0.5;
 
+    const imageList = ['jpg', 'jpeg', 'png'];
     const audioList = ['mp3', 'wav'];
     const videoList = ['mp4'];
 
     filename.forEach(function(td){
         const originalName = td.textContent;
         const formatType = originalName.substring(originalName.lastIndexOf('.') + 1).toLowerCase();
+
+        if(imageList.includes(formatType)){
+            td.classList.add('file-preview');
+            td.classList.add('image-preview');
+            filePreview.push(td);
+        }
+
         if(audioList.includes(formatType)){
             td.classList.add('file-preview');
             td.classList.add('audio-preview');
@@ -194,6 +204,10 @@
                 })
                 .then(filePath => {
                     hidePreviewControl();
+                    if(formatType.contains('image-preview')){
+                        imagePreview.src = filePath;
+                        imagePreview.classList.remove('d-none');
+                    }
                     if(formatType.contains('audio-preview')) {
                         audioPreview.src = filePath;
                         audioPreview.classList.remove('d-none');
