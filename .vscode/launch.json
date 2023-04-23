@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SpringfileserverApplication<springfileserver>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.chordncode.springfileserver.SpringfileserverApplication",
+            "projectName": "springfileserver",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
