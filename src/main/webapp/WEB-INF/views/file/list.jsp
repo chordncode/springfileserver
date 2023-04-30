@@ -24,6 +24,7 @@
                     <a href="/file/upload" class="btn btn-primary" role="button">업로드</a>
                 </div>
                 <div class="card-body">
+                    <p><strong>경로 : </strong>/</p>
                     <table class="table table-bordered text-center">
                         <thead>
                             <tr>
