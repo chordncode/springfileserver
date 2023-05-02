@@ -21,10 +21,16 @@
             <div class="card border-0 rounded-2 shadow-lg my-4" style="width: 80%; height: 60%; min-width: 660px;">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2>파일 목록</h2>
-                    <a href="/file/upload" class="btn btn-primary" role="button">업로드</a>
+                    <div>
+                        <form name="dirForm" action="/file/newDir" method="post">
+                            <input type="hidden" name="currentDir" value="${requestScope.currentDir}" />
+                        </form>
+                        <button id="newDirBtn" class="btn btn-primary">새 폴더</button>
+                        <a href="/file/upload" class="btn btn-success" role="button">업로드</a>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <p><strong>경로 : </strong>/</p>
+                    <p><strong>경로 : </strong>${requestScope.currentDir}</p>
                     <table class="table table-bordered text-center">
                         <thead>
                             <tr>
@@ -59,24 +65,28 @@
                             </c:choose>
                         </tbody>
                     </table>
+                    <c:set var="page" value="${requestScope.pageInfo}" />
+                    <form name="listForm" action="/file" method="get">
+                        <input type="hidden" name="page" value="${page.currentPage}" />
+                        <input type="hidden" name="currentDir" value="${requestScope.currentDir}" />
+                    </form>
                     <div class="d-flex justify-content-center align-items-center">
-                        <c:set var="page" value="${requestScope.pageInfo}" />
                         <ul class="pagination">
                             <c:if test="${page.startPage > 1}">
                                 <li class="page-item">
-                                    <a class="page-link" href="/file/pages/${startPage - 1}" aria-label="Previous">
+                                    <a class="page-link" href="#" onclick="pageination('${startPage - 1}');" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                             </c:if>
                             <c:forEach var="num" begin="${page.startPage}" end="${page.endPage}">
                                 <li class="page-item">
-                                    <a class="page-link <c:if test='${page.currentPage == num}'>active</c:if>" href="/file/pages/${num}">${num}</a>
+                                    <a class="page-link <c:if test='${page.currentPage == num}'>active</c:if>" href="#" onclick="pagination('${num}')">${num}</a>
                                 </li>
                             </c:forEach>
                             <c:if test="${page.endPage < page.totalPages}">
                                 <li class="page-item">
-                                    <a class="page-link" href="/file/pages/${endPage + 1}" aria-label="Next">
+                                    <a class="page-link" href="#" onclick="pageination('${endPage + 1}');" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -116,9 +126,12 @@
     </div>
 </body>
 <script>
+    const listForm = document.listForm;
     const filename = document.querySelectorAll('.filename');
     const updateForm = document.updateForm;
     const deleteForm = document.deleteForm;
+    const dirForm = document.dirForm;
+    const newDirBtn = document.querySelector('#newDirBtn');
     const downloadBtn = document.querySelectorAll('.downloadBtn');
     const updateBtn = document.querySelectorAll('.updateBtn');
     const deleteBtn = document.querySelectorAll('.deleteBtn');
@@ -242,6 +255,15 @@
     function closePreview(){
         hidePreviewControl();
         previewModal.hide();
+    }
+
+    newDirBtn.onclick = function(){
+        dirForm.submit();
+    }
+
+    function pagination(page){
+        listForm.page = page;
+        listForm.submit();
     }
 
 </script>

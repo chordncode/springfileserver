@@ -31,8 +31,8 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @GetMapping(value={"", "/pages/{page}"})
-    public String home(@PathVariable(required = false) Long page, Model model){
+    @GetMapping("")
+    public String home(@RequestParam(required = false) String currentDir, @RequestParam(required = false) Long page, Model model){
         PageInfo<FileDto> pageInfo = fileService.list(page);
         model.addAttribute("pageInfo", pageInfo);
         return "file/list";
@@ -45,7 +45,8 @@ public class FileController {
     }
 
     @GetMapping("/upload")
-    public String upload(){
+    public String upload(String currentDir, Model model){
+        model.addAttribute("currentDir", currentDir);
         return "file/upload";
     }
 
@@ -88,5 +89,10 @@ public class FileController {
         } catch (Exception e) {}
         model.addAttribute("msg", "잠시 후 다시 시도해주세요");
         return "alert/alertBack";
+    }
+
+    @PostMapping("/newDir")
+    public String createNewDir(@RequestParam(required = false, defaultValue = "/")String currentDir){
+        return null;
     }
 }
