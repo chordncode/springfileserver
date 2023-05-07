@@ -1,7 +1,6 @@
 package com.chordncode.springfileserver.file.service;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
