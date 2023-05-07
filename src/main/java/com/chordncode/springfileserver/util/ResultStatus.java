@@ -4,7 +4,8 @@ public enum ResultStatus {
     
     SUCCESS("SUCCESS"),
     FAILED("FAILED"),
-    NONE("NONE");
+    NONE("NONE"),
+    DUPLICATED("DUPLICATED");
 
     private final String resultStatus;
 

@@ -32,10 +32,16 @@ public class FileController {
     }
 
     @GetMapping("")
-    public String home(@RequestParam(required = false) String currentDir, @RequestParam(required = false) Long page, Model model){
-        PageInfo<FileDto> pageInfo = fileService.list(page);
-        model.addAttribute("pageInfo", pageInfo);
-        return "file/list";
+    public String home(@RequestParam(required = false) Long dirId, @RequestParam(required = false) Long page, Model model){
+        try {
+            PageInfo<FileDto> pageInfo = fileService.list(dirId, page);
+            model.addAttribute("pageInfo", pageInfo);
+            return "file/list";
+        } catch (Exception e) {
+            model.addAttribute("msg", "폴더가 존재하지 않습니다.");
+            model.addAttribute("loc", "/file");
+        }
+        return "alert/alertLoc";
     }
 
     @ResponseBody
@@ -45,17 +51,17 @@ public class FileController {
     }
 
     @GetMapping("/upload")
-    public String upload(String currentDir, Model model){
-        model.addAttribute("currentDir", currentDir);
+    public String upload(Long dirId, Model model){
+        model.addAttribute("dirId", dirId);
         return "file/upload";
     }
 
     @ResponseBody
     @PostMapping("/upload")
-    public String upload(@RequestParam MultipartFile[] uploadFile){
+    public String upload(@RequestParam(required=false) Long dirId, @RequestParam MultipartFile[] uploadFile){
         ResultStatus result = null;
         try {
-            result = fileService.upload(uploadFile);   
+            result = fileService.upload(dirId, uploadFile);   
             return result.getStatus();
         } catch (Exception e) {}
         return ResultStatus.FAILED.getStatus();
@@ -70,10 +76,11 @@ public class FileController {
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam Long fileId, Model model){
+    public String delete(@RequestParam(required=false) Long dirId, @RequestParam Long fileId, Model model){
         try {
             fileService.delete(fileId);
-            return "redirect:/file";
+            if(dirId != null) return "redirect:/file?dirId=" + dirId;
+            else return "redirect:/file";
         } catch (Exception e) {}
         model.addAttribute("msg", "잠시 후 다시 시도해주세요.");
         return "alert/alertBack";
@@ -92,7 +99,22 @@ public class FileController {
     }
 
     @PostMapping("/newDir")
-    public String createNewDir(@RequestParam(required = false, defaultValue = "/")String currentDir){
-        return null;
+    public String createNewDir(@RequestParam(required=false) Long dirId, @RequestParam String newDirName, Model model){
+        ResultStatus result = null;
+        try {
+            result = fileService.createNewDir(dirId, newDirName);
+            if(result.getStatus().equalsIgnoreCase("DUPLICATED")){
+                model.addAttribute("msg", "중복된 폴더명입니다.");
+                return "alert/alertBack";
+            }
+        } catch (Exception e) {
+            model.addAttribute("msg", "잠시 후 다시 시도해주세요.");
+            return "alert/alertBack";
+        }
+
+        if(dirId != null){
+            return "redirect:/file?dirId=" + dirId;
+        }
+        return "redirect:/file";
     }
 }

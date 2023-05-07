@@ -3,6 +3,7 @@ package com.chordncode.springfileserver.data.dto;
 import java.time.format.DateTimeFormatter;
 
 import com.chordncode.springfileserver.data.entity.FileInfo;
+import com.chordncode.springfileserver.util.DirInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class FileDto {
     private String savePath;
     private String formatType;
     private Long size;
+    private DirInfo dirInfo;
     private String createdAt;
 
     public FileDto(FileInfo file){
@@ -31,5 +33,17 @@ public class FileDto {
         this.formatType = file.getFormatType();
         this.size = file.getSize();
         this.createdAt = file.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public FileDto(FileInfo file, DirInfo dirInfo){
+        this.fileId = file.getFileId();
+        this.saveName = file.getSaveName();
+        this.originalName = file.getOriginalName();
+        this.savePath = file.getSavePath();
+        this.formatType = file.getFormatType();
+        this.size = file.getSize();
+        this.createdAt = file.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        
+        this.dirInfo = dirInfo;
     }
 }

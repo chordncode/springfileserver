@@ -21,7 +21,11 @@ public class PageInfo<T> {
 
     private List<T> contentList;
 
-    public PageInfo(long currentPage, long totalRow, long rowSize, long pageSize){
+    private DirInfo dirInfo;
+
+    public PageInfo(DirInfo dirInfo, long currentPage, long totalRow, long rowSize, long pageSize){
+
+        this.dirInfo = dirInfo;
 
         this.currentPage = currentPage;
         this.totalRows = totalRow;

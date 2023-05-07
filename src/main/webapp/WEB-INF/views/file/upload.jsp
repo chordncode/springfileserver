@@ -23,7 +23,7 @@
                             <div class="d-flex justify-content-center align-items-center">
                                 <input type="file" id="uploadFile" name="uploadFile" class="form-control my-3 w-50" multiple />
                             </div>
-                            <input type="hidden" name="currentDir" value="${requestScope.currentDir}" />
+                            <input type="hidden" name="dirId" value="${requestScope.dirId}" />
                             <button type="button" id="uploadFileBtn" class="btn btn-primary w-25">업로드</button>
                         </div>
                     </form>
@@ -135,7 +135,7 @@
         xhr.onreadystatechange = function(){
             if(xhr.readyState == 4){
                 if(xhr.status == 200){
-                    location.href = '/file';
+                    location.href = '/file?dirId=${requestScope.dirId}';
                 } else {
                     alert('에러가 발생했습니다.');
                     location.reload();

@@ -42,6 +42,12 @@ public class FileInfo {
     @Column(name="size", nullable=false)
     private Long size;
 
+    @Column(name="dir_id")
+    private Long dirId;
+
+    @Column(name="dir_yn", nullable=false)
+    private String dirYn;
+
     @Column(name="created_at", nullable=false)
     private LocalDateTime createdAt;
     

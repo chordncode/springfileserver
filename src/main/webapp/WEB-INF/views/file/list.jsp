@@ -8,7 +8,7 @@
         td{
             vertical-align: middle;
         }
-        .file-preview:hover{
+        .file-preview:hover, .directory:hover{
             text-decoration: underline;
             cursor: pointer;
         }
@@ -22,15 +22,17 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h2>파일 목록</h2>
                     <div>
+                        <c:set var="dirInfo" value="${requestScope.pageInfo.dirInfo}" />
                         <form name="dirForm" action="/file/newDir" method="post">
-                            <input type="hidden" name="currentDir" value="${requestScope.currentDir}" />
+                            <input type="hidden" id="newDirName" name="newDirName" />
+                            <input type="hidden" name="dirId" value="${dirInfo.dirId}" />
                         </form>
                         <button id="newDirBtn" class="btn btn-primary">새 폴더</button>
-                        <a href="/file/upload" class="btn btn-success" role="button">업로드</a>
+                        <a href="/file/upload?dirId=${dirInfo.dirId}" class="btn btn-success" role="button">업로드</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <p><strong>경로 : </strong>${requestScope.currentDir}</p>
+                    <p><strong>경로 : </strong>${requestScope.pageInfo.dirInfo.dirName}</p>
                     <table class="table table-bordered text-center">
                         <thead>
                             <tr>
@@ -41,17 +43,27 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <c:if test="${dirInfo.dirId != null}">
+                                <tr>
+                                    <td></td>
+                                    <td><a href="/file?dirId=${dirInfo.parentDirId}">..</a></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </c:if>
                             <c:set var="fileList" value="${requestScope.pageInfo.contentList}" />
                             <c:choose>
                                 <c:when test="${fileList != null and fileList.size() > 0}">
                                     <c:forEach var="file" items="${fileList}">
                                         <tr class="fileRow">
                                             <td class="fileId">${file.fileId}</td>
-                                            <td class="filename">${file.originalName}</td>
+                                            <td class="filename <c:if test='${file.formatType == \"dir\"}'>directory</c:if>">${file.originalName}</td>
                                             <td>${file.createdAt}</td>
                                             <td>
-                                                <button type="button" class="btn btn-success my-1 downloadBtn">다운</button>
-                                                <button type="button" class="btn btn-primary my-1 updateBtn">수정</button>
+                                                <c:if test="${file.formatType != 'dir'}">
+                                                    <button type="button" class="btn btn-success my-1 downloadBtn">다운</button>
+                                                    <button type="button" class="btn btn-primary my-1 updateBtn">수정</button>
+                                                </c:if>
                                                 <button type="button" class="btn btn-danger my-1 deleteBtn">삭제</button>
                                             </td>
                                         </tr>
@@ -102,6 +114,7 @@
         <input type="hidden" name="originalName" />
     </form>
     <form name="deleteForm" action="/file/delete" method="post">
+        <input type="hidden" name="dirId" value="${dirInfo.dirId}" />
         <input type="hidden" name="fileId" />
     </form>
     <div id="previewModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
@@ -131,10 +144,12 @@
     const updateForm = document.updateForm;
     const deleteForm = document.deleteForm;
     const dirForm = document.dirForm;
+    const newDirName = document.querySelector('#newDirName');
     const newDirBtn = document.querySelector('#newDirBtn');
     const downloadBtn = document.querySelectorAll('.downloadBtn');
     const updateBtn = document.querySelectorAll('.updateBtn');
     const deleteBtn = document.querySelectorAll('.deleteBtn');
+    const directories = document.querySelectorAll('.directory');
     const filePreview = [];
 
     const previewModal = new bootstrap.Modal(document.querySelector('#previewModal'), {});
@@ -235,6 +250,13 @@
         }
     });
 
+    directories.forEach(function(directory){
+        directory.onclick = function(){
+            const fileId = this.closest('.fileRow').querySelector('.fileId').textContent;
+            location.href = '/file?dirId=' + fileId;
+        }
+    });
+
     function getFileId(target){
         return target.closest('.fileRow').querySelector('.fileId').textContent;
     }
@@ -258,6 +280,13 @@
     }
 
     newDirBtn.onclick = function(){
+        const dirName = prompt('새 폴더의 이름을 입력해주세요.');
+        if(dirName.trim() == '') {
+            alert('폴더명을 입력해주세요.');
+            return;
+        }
+
+        newDirName.value = dirName;
         dirForm.submit();
     }
 
